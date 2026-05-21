@@ -1,0 +1,51 @@
+﻿name: multimodal-agent
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+dependencies:
+  # Python 版本（3.10 兼容性最好）
+  - python=3.10
+  
+  # PyTorch（CUDA 12.1，根据你的服务器版本调整）
+  - pytorch>=2.4.0
+  - torchvision
+  - torchaudio
+  - pytorch-cuda=12.1
+  
+  # 大模型核心库
+  - transformers>=4.48.0
+  - accelerate>=1.2.0
+  - sentencepiece
+  - protobuf
+  
+  # LoRA 微调
+  - peft>=0.13.0
+  - bitsandbytes>=0.44.0
+  
+  # 推理加速
+  - vllm  # 注意：vllm 可能需要 pip 安装，conda 频道可能没有
+  
+  # 评估工具
+  - clip  # 注意：clip 可能需要 pip 安装
+  
+  # 服务部署
+  - fastapi
+  - uvicorn
+  - streamlit
+  - python-multipart
+  
+  # 其他依赖
+  - pyyaml
+  - requests
+  - tqdm
+  - pip
+  
+  # pip 额外依赖（conda 频道没有的）
+  - pip:
+    - unsloth[colab-new] @ git+https://github.com/unslothai/unsloth.git
+    - open-clip-torch
+    - nltk
+    - rouge-score
+    - sentence-transformers
