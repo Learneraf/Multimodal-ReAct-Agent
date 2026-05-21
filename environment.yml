@@ -1,4 +1,4 @@
-﻿name: multimodal-agent
+name: multimodal-agent
 channels:
   - pytorch
   - nvidia
