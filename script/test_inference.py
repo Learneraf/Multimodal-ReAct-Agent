@@ -1,5 +1,5 @@
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import Qwen2_5_VLForConditionalGeneration, AutoTokenizer
 
 MODEL_PATH = "Qwen/Qwen2.5-VL-7B-Instruct"
 
@@ -10,7 +10,7 @@ tokenizer = AutoTokenizer.from_pretrained(
 )
 
 print(f"Loading model from {MODEL_PATH}...")
-model = AutoModelForCausalLM.from_pretrained(
+model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
     MODEL_PATH,
     torch_dtype=torch.bfloat16,
     device_map="auto",

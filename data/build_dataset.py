@@ -1,34 +1,3 @@
-## Day 2：数据准备
-
-### 2.1 下载 LLaVA-Instruct-150K
-
-# 克隆 LLaVA 仓库
-git clone https://github.com/haotian-liu/LLaVA.git
-cd LLaVA
-
-# 下载指令微调数据（约 3GB）
-# 在 LLaVA 仓库根目录运行：
-python -m llava.serve.download_model --model_path ./llava_instruct_150k
-
-或者直接下载 JSON 文件：
-
-- 访问 https://huggingface.co/datasets/liuhaotian/LLaVA-Instruct-150K
-- 下载 llava_instruct_150k.json
-
-### 2.2 下载 COCO Captions
-
-# 方式 1：用 HuggingFace datasets 库
-pip install datasets
-python -c "from datasets import load_dataset; ds = load_dataset('coco', split='train', download_mode='force_redownload')"
-
-# 方式 2：手动下载
-# 访问 https://cocodataset.org/#download
-# 下载 train2014.zip (13GB) + annotations/captions_train2014.json
-
-### 2.3 数据预处理脚本
-
-创建 data/build_dataset.py：
-
 """
 将 LLaVA-Instruct-150K + COCO Captions 合并为 Qwen2.5-VL 训练格式
 输出：train.jsonl, val.jsonl, test.jsonl
@@ -136,11 +105,11 @@ def convert_to_qwen_format(samples):
 
 def main():
     # 路径配置
-    llava_json = "LLaVA/llava_instruct_150k.json"  # 根据实际路径修改
-    coco_annotations = "coco/annotations/captions_train2014.json"  # 根据实际路径修改
-    coco_image_dir = "coco/train2014"
+    llava_json = "raw/LLaVA/llava_instruct_150k.json"  # 根据实际路径修改
+    coco_annotations = "raw/coco/annotations/captions_train2014.json"  # 根据实际路径修改
+    coco_image_dir = "raw/coco/train2014"
 
-    output_dir = Path("data")
+    output_dir = Path("processed")
     output_dir.mkdir(exist_ok=True)
 
     # 加载数据
@@ -195,76 +164,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-运行：
-
-python data/build_dataset.py
-
-预期输出：
-
-Loading LLaVA data...
-LLaVA samples: ~15000
-Loading COCO captions...
-COCO samples: ~82000
-Total: ~97000
-Saved 1600 samples to processed\train.jsonl
-Saved 200 samples to processed\val.jsonl
-Saved 200 samples to processed\test.jsonl
-
-=== Dataset preparation complete! ===
-Train: 1600, Val: 200, Test: 200
-
-### 2.4 验证数据格式
-
-# 查看第一条数据
-head -1 processed\train.jsonl | python -m json.tool
-
-应该看到类似结构：
-
-{
-"messages": [
-    {
-    "role": "user",
-    "content": [
-        {"type": "image", "image": "https://..."},
-        {"type": "text", "text": "请描述这张图片..."}
-    ]
-    },
-    {
-    "role": "assistant",
-    "content": [
-        {"type": "text", "text": "这是一张..."}
-    ]
-    }
-],
-"metadata": {
-    "source": "llava",
-    "instruction": "请描述...",
-    "output": "这是一张..."
-}
-}
-
-———
-
-## Day 1-2 检查清单
-
-- [ ] conda 环境创建成功，Python 3.10
-- [ ] PyTorch + CUDA 验证通过
-- [ ] transformers, peft, unsloth 等核心库安装成功
-- [ ] Qwen2.5-VL-7B 模型下载完成，推理验证通过
-- [ ] LLaVA-Instruct-150K 数据下载完成
-- [ ] COCO Captions 数据下载完成
-- [ ] data/build_dataset.py 运行成功，产出 train/val/test JSONL
-- [ ] 数据格式验证正确
-
-———
-
-## 常见问题
-
-┌────────────────────┬─────────────────────────────────────────────────┐
-│ 问题               │ 解决                                            │
-├────────────────────┼─────────────────────────────────────────────────┤
-│ HuggingFace 下载慢 │ 配置镜像：set HF_ENDPOINT=https://hf-mirror.com │
-│ 显存不够加载模型   │ 用 4-bit 量化：load_in_4bit=True                │
-│ LLaVA 数据下载失败 │ 直接去 HuggingFace 下载 JSON 文件               │
-│ COCO 图片太大      │ 预处理时只下载图片 URL，训练时按需加载          │

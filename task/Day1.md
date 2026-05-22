@@ -13,7 +13,7 @@ conda activate multimodal-agent
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 
 # 大模型核心库
-pip install transformers==4.48.0
+pip install transformers==5.5.0
 pip install peft==0.13.2
 pip install accelerate==1.2.0
 pip install bitsandbytes==0.44.1
@@ -24,7 +24,7 @@ pip install protobuf
 pip install unsloth[colab-new] @ git+https://github.com/unslothai/unsloth.git
 
 # 推理加速
-pip install vllm
+pip install vllm==0.21.0
 
 # 评估工具
 pip install clip
